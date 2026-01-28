@@ -287,7 +287,7 @@ pub async fn run_irc(
 }
 
 
-fn get_config_dir() -> PathBuf {
+pub fn get_config_dir() -> PathBuf {
     if let Some(home) = home_dir() {
         home.join(".config").join("duckIRC")
     } else {
@@ -379,7 +379,7 @@ ghost_sequence = []"##;
     Ok(())
 }
 
-fn create_default_servers_config(path: &PathBuf) -> Result<()> {
+pub fn create_default_servers_config(path: &PathBuf) -> Result<()> {
     let default_config = r##"[[servers]]
 name = "Libera"
 address = "irc.libera.chat"

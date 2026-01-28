@@ -42,6 +42,7 @@ cargo build --release
 ```
 
 The binary will be available at `target/release/duckirc`
+(there is a release build already included if you simply clone the repo, but if you don't trust me you can build it yourself).
 
 ## Quick Start
 
@@ -162,8 +163,6 @@ DuckIRC stores configuration in `~/.config/duckIRC/`:
 ### servers.toml
 
 Manage your IRC servers:
-for now this is the minimal config. if one is omitted and then selected in the UI the application will crash.
-
 ```toml
 [[servers]]
 name = "Libera"
@@ -229,7 +228,6 @@ duckirc/
 
 - [ ] Refactor this godawfull codebase into something a human can read
 - [ ] Fix rapid server switching issues
-- [ ] Fix minimal config crash
 - [ ] Add inline image support
 - [ ] Add mode vim commands
 - [ ] Add more IRC commands

@@ -5,6 +5,7 @@ use wl_clipboard_rs::copy::{MimeType, Options, Source};
 use crate::irc::IrcCommand;
 use crate::servers::ServerConfig;
 use crate::ui::color_for_user;
+use crate::irc::{get_config_dir, create_default_servers_config};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ServerTreeItem {
@@ -96,8 +97,13 @@ pub struct App {
 
 impl App {
     pub fn new() -> Self {
-        let server_config_path = "/home/duck/.config/duckirc/servers.toml";
-        let server_config = ServerConfig::load(server_config_path).unwrap_or_else(|_| ServerConfig::default_config());
+        let config_dir = get_config_dir();
+        let server_config_path = config_dir.join("servers.toml");
+        if !server_config_path.exists() {
+            create_default_servers_config(&server_config_path).ok();
+        }
+        let server_config = ServerConfig::load(server_config_path.to_str().expect("Invalid path"))
+            .unwrap_or_else(|_| ServerConfig::default_config());
         let servers = server_config.servers
             .iter()
             .map(|s| ServerInfo {
