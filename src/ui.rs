@@ -289,7 +289,7 @@ pub fn render(frame: &mut Frame, app: &mut App) {
 
     // ── Command popup ────────────────────────────────────────────
     if vim_mode == VimMode::Command {
-        let area = centered_rect(60, 5, frame.area());
+        let area = centered_rect(50, 75, frame.area());
         frame.render_widget(Clear, area);
 
         frame.render_widget(
@@ -346,7 +346,7 @@ pub fn render(frame: &mut Frame, app: &mut App) {
 fn centered_rect(percent_x: u16, percent_y: u16, area: Rect) -> Rect {
     let v = Layout::vertical([
         Constraint::Percentage((100 - percent_y) / 2),
-        Constraint::Percentage(percent_y),
+        Constraint::Length(3),
         Constraint::Percentage((100 - percent_y) / 2),
     ]).split(area);
 
