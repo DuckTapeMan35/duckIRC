@@ -1,0 +1,11 @@
+/home/duck/duckIRC/target/debug/deps/wl_clipboard_rs-d5a67abcf34116d7.d: /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wl-clipboard-rs-0.9.3/src/lib.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wl-clipboard-rs-0.9.3/src/common.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wl-clipboard-rs-0.9.3/src/data_control.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wl-clipboard-rs-0.9.3/src/seat_data.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wl-clipboard-rs-0.9.3/src/copy.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wl-clipboard-rs-0.9.3/src/paste.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wl-clipboard-rs-0.9.3/src/utils.rs
+
+/home/duck/duckIRC/target/debug/deps/libwl_clipboard_rs-d5a67abcf34116d7.rmeta: /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wl-clipboard-rs-0.9.3/src/lib.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wl-clipboard-rs-0.9.3/src/common.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wl-clipboard-rs-0.9.3/src/data_control.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wl-clipboard-rs-0.9.3/src/seat_data.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wl-clipboard-rs-0.9.3/src/copy.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wl-clipboard-rs-0.9.3/src/paste.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wl-clipboard-rs-0.9.3/src/utils.rs
+
+/home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wl-clipboard-rs-0.9.3/src/lib.rs:
+/home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wl-clipboard-rs-0.9.3/src/common.rs:
+/home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wl-clipboard-rs-0.9.3/src/data_control.rs:
+/home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wl-clipboard-rs-0.9.3/src/seat_data.rs:
+/home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wl-clipboard-rs-0.9.3/src/copy.rs:
+/home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wl-clipboard-rs-0.9.3/src/paste.rs:
+/home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wl-clipboard-rs-0.9.3/src/utils.rs:
