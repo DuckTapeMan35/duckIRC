@@ -12,10 +12,10 @@ use duck_irc::app::{
     ClientInfo,
 };
 use duck_irc::irc::{IrcCommand, UiEvent, run_irc, get_user_nick};
-use duck_irc::click_state::ClickState;
+use duck_irc::input::click_state::ClickState;
 use duck_irc::ui::render;
-use duck_irc::mouse_handlers::handle_mouse_event;
-use duck_irc::keyboard_handlers::handle_keyboard_event;
+use duck_irc::input::mouse_handlers::handle_mouse_event;
+use duck_irc::input::keyboard_handlers::handle_keyboard_event;
 
 #[tokio::main]
 async fn main() -> Result<()> {
