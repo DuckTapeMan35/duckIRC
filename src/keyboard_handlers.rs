@@ -1,6 +1,6 @@
 use crate::irc::{IrcCommand, get_user_nick};
 use crate::app::{App, VimMode, ChannelContext};
-use crate::ServerTreeItem;
+use crate::app::ServerTreeItem;
 use tokio::sync::mpsc;
 use ratatui::crossterm::event;
 use crossterm::event::KeyEvent;

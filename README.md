@@ -192,8 +192,23 @@ User settings:
 
 ```toml
 nickname = "duck"
+nick_password = "duck"
 username = "duck"
 realname = "duck"
+server = "thepiratesplunder.org"
+port = 6697
+password = ""
+use_tls = true
+encoding = "UTF-8"
+channels = ["#TPP"]
+umodes = "+RB-x"
+user_info = "test user"
+ping_time = 180
+ping_timeout = 20
+burst_window_length = 8
+max_messages_in_burst = 15
+ghost_sequence = []
+
 ```
 
 ## Project Structure
@@ -235,4 +250,3 @@ duckirc/
 - [ ] Implement a plugin system (embdded Lua?)
 - [ ] Enhance clipboard support for X11
 - [ ] Add theming support for UI customization
-

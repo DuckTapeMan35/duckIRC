@@ -4,38 +4,42 @@ use crossterm::event::{EnableMouseCapture, DisableMouseCapture};
 use crossterm::execute;
 use tokio::sync::mpsc;
 use tokio::time::Duration;
-mod app;
-use app::{App, ClientInfo, ChannelInfo, ChannelContext};
-use app::ServerTreeItem;
-mod irc;
-use irc::*;
-mod ui;
-use ui::render;
-mod servers;
-mod click_state;
-use click_state::ClickState;
-mod mouse_handlers;
-use mouse_handlers::handle_mouse_event;
-mod keyboard_handlers;
-use keyboard_handlers::*;
+
+use duck_irc::app::{
+    App,
+    ChannelContext,
+    ChannelInfo,
+    ClientInfo,
+};
+use duck_irc::irc::{IrcCommand, UiEvent, run_irc, get_user_nick};
+use duck_irc::click_state::ClickState;
+use duck_irc::ui::render;
+use duck_irc::mouse_handlers::handle_mouse_event;
+use duck_irc::keyboard_handlers::handle_keyboard_event;
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    // Initialize error handling
     color_eyre::install()?;
 
+    // Init channels for communication between UI and IRC client
     let (irc_tx, irc_rx) = mpsc::unbounded_channel::<IrcCommand>();  // UI -> IRC
     let (ui_tx, mut ui_rx) = mpsc::unbounded_channel::<UiEvent>(); // IRC -> UI
     
     // Start the IRC client
     tokio::spawn(run_irc(ui_tx.clone(), irc_rx));
     
+    // Initialize the app state
     let mut app = App::new();
     app.push_initial_messages();
-    
     let initial_nick = get_user_nick().unwrap_or("guest".to_string());
     app.current_nick = initial_nick;
     execute!(std::io::stdout(), EnableMouseCapture)?;
+
+    // Initialize terminal UI
     let terminal = ratatui::init();
+
+    // Event loop
     let result = run(terminal, &mut app, irc_tx, &mut ui_rx).await;
     execute!(std::io::stdout(), DisableMouseCapture)?;
     ratatui::restore();

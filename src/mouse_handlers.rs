@@ -1,8 +1,8 @@
 use crate::app::{App, VimMode};
 use crate::click_state::ClickState;
 use crate::irc::IrcCommand;
-use crate::ChannelContext;
-use crate::ServerTreeItem;
+use crate::app::ChannelContext;
+use crate::app::ServerTreeItem;
 use crossterm::event::{MouseButton, MouseEvent, MouseEventKind};
 use std::iter::once;
 use tokio::sync::mpsc;
