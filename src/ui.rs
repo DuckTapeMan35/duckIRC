@@ -107,36 +107,50 @@ pub fn render(frame: &mut Frame, app: &mut App) {
     let mut msg_scroll = 0usize;
 
     if let Some(msgs) = app.get_current_messages_mut() {
-        let viewport_height =
-            main_chunks[1].height.saturating_sub(3) as usize;
-
-        msgs.viewport_height = viewport_height;
-        msg_index = msgs.msg_index;
-        msg_scroll = msgs.msg_scroll;
-
-        let start = msgs.msg_scroll;
-        let end = (start + viewport_height).min(msgs.messages.len());
-
-        message_lines = msgs.messages[start..end]
-            .iter()
-            .enumerate()
-            .map(|(i, msg)| {
-                let absolute = start + i;
-
-                let mut line = if let Some(nick) = &msg.nick {
-                    Line::from(vec![
-                        Span::styled(
-                            format!("<{}>", nick),
-                            Style::default()
-                                .fg(msg.color.unwrap_or(Color::White)),
-                        ),
-                        Span::raw(format!(" {}", msg.text)),
-                    ])
-                } else {
-                    Line::from(Span::raw(&msg.text))
-                };
-
-                if vim_mode == VimMode::Messages && absolute == msg_index {
+    let viewport_height = main_chunks[1].height.saturating_sub(3) as usize;
+    let max_width = (main_chunks[1].width.saturating_sub(2)) as usize;
+    
+    msgs.viewport_height = viewport_height;
+    msg_index = msgs.msg_index;
+    
+    // Calculate total visual lines up to and including current message
+    let mut visual_lines_to_current = 0;
+    for i in 0..=msg_index.min(msgs.messages.len().saturating_sub(1)) {
+        if let Some(msg) = msgs.messages.get(i) {
+            let positions = get_wrapped_line_positions(msg, max_width);
+            visual_lines_to_current += positions.len();
+        }
+    }
+    
+    // Auto-scroll: ensure current message's last visual line is visible
+    let current_visual_line = visual_lines_to_current.saturating_sub(1);
+    
+    if current_visual_line >= msgs.msg_scroll + viewport_height {
+        // Scroll down so current line is at bottom of viewport
+        msgs.msg_scroll = current_visual_line.saturating_sub(viewport_height - 1);
+    } else if current_visual_line < msgs.msg_scroll {
+        // Scroll up so current line is at top of viewport
+        msgs.msg_scroll = current_visual_line;
+    }
+    
+    msg_scroll = msgs.msg_scroll;
+    
+    // Now build visible lines based on visual line range
+    let mut current_visual_line = 0;
+    
+    for (msg_idx, msg) in msgs.messages.iter().enumerate() {
+        let positions = get_wrapped_line_positions(msg, max_width);
+        
+        for (line_in_msg, _) in positions.iter().enumerate() {
+            // Check if this visual line is in the viewport
+            if current_visual_line >= msg_scroll && current_visual_line < msg_scroll + viewport_height {
+                // Extract the portion of text for this wrapped line
+                let line_text = get_wrapped_line_text(msg, max_width, line_in_msg);
+                
+                let mut line = Line::from(line_text);
+                
+                // Highlight if this is the selected message
+                if vim_mode == VimMode::Messages && msg_idx == msg_index {
                     line.spans = line.spans.into_iter()
                         .map(|s| Span::styled(
                             s.content,
@@ -144,11 +158,23 @@ pub fn render(frame: &mut Frame, app: &mut App) {
                         ))
                         .collect();
                 }
-
-                line
-            })
-            .collect();
+                
+                message_lines.push(line);
+            }
+            
+            current_visual_line += 1;
+            
+            // Stop if we've filled the viewport
+            if message_lines.len() >= viewport_height {
+                break;
+            }
+        }
+        
+        if message_lines.len() >= viewport_height {
+            break;
+        }
     }
+}
 
     let messages_widget = Paragraph::new(message_lines)
         .block(
@@ -272,8 +298,8 @@ pub fn render(frame: &mut Frame, app: &mut App) {
                     }
                 }
                 
-                // Add current visual line within message (stored in app state)
-                let visual_line_in_msg = 0; // This should come from app.msg_visual_line if you add it
+                // Add current visual line within message
+                let visual_line_in_msg = 0;
                 
                 visual_line_index += visual_line_in_msg;
                 
@@ -498,4 +524,63 @@ fn get_wrapped_line_positions(msg: &ColoredMessage, max_width: usize) -> Vec<usi
     }
     
     positions
+}
+
+fn get_wrapped_line_text(msg: &ColoredMessage, max_width: usize, line_index: usize) -> Vec<Span<'_>> {
+    // Build full display text
+    let display_text = if let Some(nick) = &msg.nick {
+        format!("<{}> {}", nick, msg.text)
+    } else {
+        msg.text.clone()
+    };
+    
+    let mut current_line = 0;
+    let mut remaining = display_text.as_str();
+    
+    while !remaining.is_empty() {
+        if current_line == line_index {
+            // This is the line we want
+            let line_end = if remaining.len() <= max_width {
+                remaining.len()
+            } else {
+                // Find break point
+                remaining[..max_width]
+                    .rfind(' ')
+                    .map(|i| i + 1)
+                    .unwrap_or(max_width)
+            };
+            
+            let line_text = &remaining[..line_end];
+            
+            // Apply coloring for nick if this is the first line
+            if line_index == 0 && msg.nick.is_some() {
+                let nick = msg.nick.as_ref().unwrap();
+                let nick_part = format!("<{}>", nick.clone());
+                return vec![
+                    Span::styled(
+                        nick_part.clone(),
+                        Style::default().fg(msg.color.unwrap_or(Color::White)),
+                    ),
+                    Span::raw(line_text[nick_part.len()..].to_string()),
+                ];
+            } else {
+                return vec![Span::raw(line_text.to_string())];
+            }
+        }
+        
+        // Move to next line
+        let break_at = if remaining.len() <= max_width {
+            remaining.len()
+        } else {
+            remaining[..max_width]
+                .rfind(' ')
+                .map(|i| i + 1)
+                .unwrap_or(max_width)
+        };
+        
+        remaining = &remaining[break_at..];
+        current_line += 1;
+    }
+    
+    vec![Span::raw("")]
 }
