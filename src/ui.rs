@@ -5,7 +5,7 @@ use ratatui::{
     symbols::line,
     text::{Span, Line},
 };
-use crate::app::{App, VimMode};
+use crate::app::{App, VimMode, ColoredMessage};
 use crate::app::ServerTreeItem;
 use crossterm::cursor::SetCursorStyle;
 use crossterm::execute;
@@ -260,11 +260,31 @@ pub fn render(frame: &mut Frame, app: &mut App) {
             ));
         }
         VimMode::Messages => {
-            let y = msg_index.saturating_sub(msg_scroll) as u16;
-            frame.set_cursor_position((
-                main_chunks[1].x + 1,
-                main_chunks[1].y + 1 + y,
-            ));
+            if let Some(msgs) = app.channel_messages.get(&(app.current_channel.as_ref().unwrap().server_name.clone(), app.current_channel.as_ref().unwrap().channel_name.clone())) && msg_index < msgs.messages.len() {
+                let max_width = (main_chunks[1].width.saturating_sub(2)) as usize;
+                // Calculate total visual lines before current message
+                let mut visual_line_index = 0;
+                // Sum up all wrapped lines from messages before the current one
+                for i in 0..msg_index {
+                    if let Some(prev_msg) = msgs.messages.get(i) {
+                        let positions = get_wrapped_line_positions(prev_msg, max_width);
+                        visual_line_index += positions.len();
+                    }
+                }
+                
+                // Add current visual line within message (stored in app state)
+                let visual_line_in_msg = 0; // This should come from app.msg_visual_line if you add it
+                
+                visual_line_index += visual_line_in_msg;
+                
+                // Apply scroll offset
+                let y = visual_line_index.saturating_sub(msg_scroll) as u16;
+                
+                frame.set_cursor_position((
+                    main_chunks[1].x + 1,
+                    main_chunks[1].y + 1 + y,
+                ));
+            }
         }
         VimMode::Server => {
             if let Some(item) = server_tree.get(server_tree_index) {
@@ -425,9 +445,18 @@ fn create_tree_view(app: &App) -> Vec<ListItem<'_>> {
 
 pub fn color_for_user(nick: &str) -> Color {
     let colors = [
-        Color::Red, Color::Green, Color::Yellow, Color::Blue,
-        Color::Magenta, Color::Cyan, Color::LightRed, Color::LightGreen,
-        Color::LightYellow, Color::LightBlue, Color::LightMagenta, Color::LightCyan,
+        Color::Red,
+        Color::Green,
+        Color::Yellow,
+        Color::Blue,
+        Color::Magenta,
+        Color::Cyan,
+        Color::LightRed,
+        Color::LightGreen,
+        Color::LightYellow,
+        Color::LightBlue,
+        Color::LightMagenta,
+        Color::LightCyan,
     ];
 
     // Hash the nick to pick a color
@@ -438,3 +467,35 @@ pub fn color_for_user(nick: &str) -> Color {
     colors[(hash as usize) % colors.len()]
 }
 
+fn get_wrapped_line_positions(msg: &ColoredMessage, max_width: usize) -> Vec<usize> {
+    let mut positions = Vec::new();
+    
+    // Calculate the full display text including nick if present
+    let display_text = if let Some(nick) = &msg.nick {
+        format!("<{}> {}", nick, msg.text)
+    } else {
+        msg.text.clone()
+    };
+    
+    let mut current_pos = 0;
+    let mut remaining = display_text.as_str();
+    
+    while !remaining.is_empty() {
+        positions.push(current_pos);
+        
+        if remaining.len() <= max_width {
+            break;
+        }
+        
+        // Try to find a good break point (space)
+        let mut break_at = max_width;
+        if let Some(last_space) = remaining[..max_width].rfind(' ') {
+            break_at = last_space + 1; // Include the space in current line
+        }
+        
+        current_pos += break_at;
+        remaining = &remaining[break_at..];
+    }
+    
+    positions
+}

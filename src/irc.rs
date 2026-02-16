@@ -358,9 +358,9 @@ fn parse_names(names_str: &str) -> Vec<String> {
 
 fn create_default_runtime_config(path: &PathBuf) -> Result<()> {
     let default_config = r##"nickname = "duck"
-nick_password = "duck"
-username = "duck"
-realname = "duck"
+nick_password = "guest"
+username = "guest"
+realname = "guest"
 server = "thepiratesplunder.org"
 port = 6697
 password = ""
@@ -395,8 +395,7 @@ use_tls = true
 [[servers]]
 name = "tpp"
 address = "thepiratesplunder.org"
-port = 6697
-channels = ["#TPP"]"##;
+port = 6697"##;
     
     fs::write(path, default_config)?;
     Ok(())

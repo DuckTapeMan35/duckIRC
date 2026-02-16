@@ -241,7 +241,6 @@ duckirc/
 
 ## TODO
 
-- [ ] Refactor this godawfull codebase into something a human can read
 - [ ] Fix rapid server switching issues
 - [ ] Add inline image support
 - [ ] Add mode vim commands
@@ -250,3 +249,4 @@ duckirc/
 - [ ] Implement a plugin system (embdded Lua?)
 - [ ] Enhance clipboard support for X11
 - [ ] Add theming support for UI customization
+- [ ] Add self signing TLS certificate support for secure connections to custom servers
