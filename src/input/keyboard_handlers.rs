@@ -7,7 +7,7 @@ use crossterm::event::KeyEvent;
 
 pub fn handle_keyboard_event(key: KeyEvent, app: &mut App, irc_tx: &mpsc::UnboundedSender<IrcCommand>,) {
     match app.vim_mode {
-        VimMode::Normal => {handle_normal(key, app);},
+        VimMode::Normal => {handle_normal(key, app, irc_tx);},
         VimMode::Insert => {handle_insert(key, app, irc_tx);},
         VimMode::Visual => {handle_visual(key, app);},
         VimMode::Command => {handle_command(key, app, irc_tx);},
@@ -18,7 +18,7 @@ pub fn handle_keyboard_event(key: KeyEvent, app: &mut App, irc_tx: &mpsc::Unboun
     }
 }
 
-fn handle_normal(key: KeyEvent, app: &mut App, ) {
+fn handle_normal(key: KeyEvent, app: &mut App, irc_tx: &mpsc::UnboundedSender<IrcCommand>,) {
     match key.code {
         event::KeyCode::Tab => {
             app.rebuild_server_tree();
@@ -42,6 +42,18 @@ fn handle_normal(key: KeyEvent, app: &mut App, ) {
         }
         event::KeyCode::Char(c) => {
             app.push_norm_char(c);
+            app.execute_normal();
+        }
+        event::KeyCode::Enter => {
+            let msg = app.take_msg_text();
+            if !msg.is_empty() {
+                // Send to IRC
+                irc_tx.send(IrcCommand::PrivMsg(msg.clone())).ok();
+                // Echo locally
+                let nick = get_user_nick().unwrap_or("guest".to_string());
+                app.push_user_msg_to_current(&nick, &msg);
+            }
+            app.msg_cursor = 0;
             app.execute_normal();
         }
         _ => {}
@@ -256,6 +268,7 @@ fn handle_messages(key: KeyEvent, app: &mut App, ) {
         event::KeyCode::Esc => {
             app.vim_mode = VimMode::Normal;
             app.prev_mode = Some(VimMode::Messages);
+            app.messages_cmd.clear();
         }
         event::KeyCode::Down => {
             app.move_msg_down();
