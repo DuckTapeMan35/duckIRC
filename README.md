@@ -179,24 +179,22 @@ You can change these manually but I kind of don't recommend it yet.
 User settings:
 
 ```toml
-nickname = "duck"
-nick_password = "duck"
-username = "duck"
-realname = "duck"
-server = "thepiratesplunder.org"
+[[servers]]
+name = "Libera"
+address = "irc.libera.chat"
 port = 6697
-password = ""
 use_tls = true
-encoding = "UTF-8"
-channels = ["#TPP"]
-umodes = "+RB-x"
-user_info = "test user"
-ping_time = 180
-ping_timeout = 20
-burst_window_length = 8
-max_messages_in_burst = 15
-ghost_sequence = []
 
+[[servers]]
+name = "OFTC"
+address = "irc.oftc.net"
+port = 6697
+use_tls = true
+
+[[servers]]
+name = "tpp"
+address = "thepiratesplunder.org"
+port = 6697
 ```
 
 ## Dependencies
