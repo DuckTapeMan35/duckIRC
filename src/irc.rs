@@ -28,17 +28,17 @@ pub enum UiEvent {
 
 #[derive(Debug)]
 pub enum IrcCommand {
-    Connect(String),      // Connect to server (name or address:port)
-    Join(String),         // Join a channel
-    PrivMsg(String),      // Send a message
-    Nick(String),         // Change nickname
-    ListServers,          // List saved servers
-    AddServer { name: String, address: String, port: u16, use_tls: bool }, // Add a server to config
-    RemoveServer(String), // Remove server by name
-    Disconnect,          // Disconnect from server
-    SetCurrentChannel(String), // Update the channel we are viewing
-    ListChannels,        // List channels in current server
-    Quit,                // Quit the application
+    Connect(String),
+    Join(String),
+    PrivMsg(String),
+    Nick(String),
+    ListServers,
+    AddServer { name: String, address: String, port: u16, use_tls: bool },
+    RemoveServer(String),
+    Disconnect,
+    SetCurrentChannel(String),
+    ListChannels,
+    Quit,
 }
 
 pub async fn run_irc(

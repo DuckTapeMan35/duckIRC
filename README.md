@@ -211,19 +211,6 @@ ghost_sequence = []
 
 ```
 
-## Project Structure
-
-```
-duckirc/
-├── src/
-│   ├── main.rs          # Main application loop and event handling
-│   ├── app.rs           # Application state and logic
-│   ├── irc.rs           # IRC protocol handling
-│   ├── ui.rs            # TUI rendering
-│   └── servers.rs       # Server configuration management
-└── Cargo.toml
-```
-
 ## Dependencies
 
 - `ratatui` - Terminal UI framework
@@ -241,11 +228,10 @@ duckirc/
 
 ## TODO
 
-- [ ] Fix rapid server switching issues
+- [ ] Fix rapid server switching issues (somehow I can't replicate them anymore, but I didn't do anything to fix them)
 - [ ] Add inline image support
-- [ ] Add mode vim commands/motions
+- [ ] Add more vim commands/motions
 - [ ] Add more IRC commands
-- [ ] Fix bug where the initial greeting message is not shown
 - [ ] Implement a plugin system (embdded Lua?)
 - [ ] Enhance clipboard support for X11
 - [ ] Add theming support for UI customization
