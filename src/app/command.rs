@@ -64,6 +64,15 @@ impl App {
                 self.prev_mode = Some(VimMode::Vimless);
                 self.rebuild_server_tree();
             }
+            "list" | "ls" => {
+                if !self.is_connected {
+                    self.push_system_to_current("Not connected to server yet. Use 'connect <server>' first.".to_string());
+                    return;
+                }
+                
+                irc_tx.send(IrcCommand::ListChannels).ok();
+                self.push_system_to_current("Requesting channel list...".to_string());
+            }
             s if s.starts_with("set_nick") || s.starts_with("nick") => {
                 let parts: Vec<&str> = s.splitn(2, ' ').collect();
                 if parts.len() < 2 {

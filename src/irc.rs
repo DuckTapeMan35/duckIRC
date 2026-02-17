@@ -33,10 +33,11 @@ pub enum IrcCommand {
     PrivMsg(String),      // Send a message
     Nick(String),         // Change nickname
     ListServers,          // List saved servers
-    AddServer { name: String, address: String, port: u16, use_tls: bool },
+    AddServer { name: String, address: String, port: u16, use_tls: bool }, // Add a server to config
     RemoveServer(String), // Remove server by name
     Disconnect,          // Disconnect from server
     SetCurrentChannel(String), // Update the channel we are viewing
+    ListChannels,        // List channels in current server
 }
 
 pub async fn run_irc(
@@ -188,6 +189,13 @@ pub async fn run_irc(
                     IrcCommand::SetCurrentChannel(channel) => {
                         current_channel = channel;
                     }
+                    IrcCommand::ListChannels => {
+                        if let Some(c) = &client {
+                            c.send(Command::LIST(None, None))?;
+                        } else {
+                            ui_tx.send(UiEvent::Error("Not connected yet".to_string())).ok();
+                        }
+                    }
                 }
             }
 
@@ -212,6 +220,35 @@ pub async fn run_irc(
                                 is_dm: false,
                             }).ok();
                         }
+                    }
+                    Command::Response(Response::RPL_LISTSTART, params) => {
+                        // Start of channel list
+                        ui_tx.send(UiEvent::Message("=== Channel List ===".to_string())).ok();
+                    }
+                    Command::Response(Response::RPL_LIST, params) => {
+                        // Channel information: params[1] = channel, params[2] = visible users, params[3] = topic
+                        if params.len() >= 4 {
+                            let channel = &params[1];
+                            let user_count = &params[2];
+                            let topic = &params[3];
+                            
+                            let topic_display = if topic.is_empty() { "No topic" } else { topic };
+                            ui_tx.send(UiEvent::Message(format!("  {} ({} users): {}", channel, user_count, topic_display))).ok();
+                            ui_tx.send(UiEvent::ChannelUpdate {
+                                server_name: current_server_name.clone(),
+                                channel_name: channel.clone(),
+                                topic: Some(topic.to_string()),
+                                client_count: user_count.parse().unwrap_or(0),
+                                clients: Vec::new(),
+                                is_joined: false,
+                                is_dm: false,
+                            }).ok();
+                        }
+                    }
+
+                    Command::Response(Response::RPL_LISTEND, _params) => {
+                        // End of channel list
+                        ui_tx.send(UiEvent::Message("=== End of Channel List ===".to_string())).ok();
                     }
                     Command::PRIVMSG(target, text) => {
                         let nick = msg.source_nickname().unwrap_or("?");
