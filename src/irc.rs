@@ -38,6 +38,7 @@ pub enum IrcCommand {
     Disconnect,          // Disconnect from server
     SetCurrentChannel(String), // Update the channel we are viewing
     ListChannels,        // List channels in current server
+    Quit,                // Quit the application
 }
 
 pub async fn run_irc(
@@ -136,7 +137,7 @@ pub async fn run_irc(
                             c.send(Command::NICK(nick.clone()))?;
                             set_user_nick(&nick).ok();
                         } else {
-                            ui_tx.send(UiEvent::Error("Not connected yet".to_string())).ok();
+                            set_user_nick(&nick).ok();
                         }
                     }
                     
@@ -196,6 +197,11 @@ pub async fn run_irc(
                             ui_tx.send(UiEvent::Error("Not connected yet".to_string())).ok();
                         }
                     }
+                    IrcCommand::Quit => {
+                        if let Some(client) = client.take() {
+                            drop(client);
+                        }
+                    }
                 }
             }
 
@@ -221,7 +227,7 @@ pub async fn run_irc(
                             }).ok();
                         }
                     }
-                    Command::Response(Response::RPL_LISTSTART, params) => {
+                    Command::Response(Response::RPL_LISTSTART, _params) => {
                         // Start of channel list
                         ui_tx.send(UiEvent::Message("=== Channel List ===".to_string())).ok();
                     }

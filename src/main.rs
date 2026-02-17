@@ -17,6 +17,15 @@ use duck_irc::ui::render;
 use duck_irc::input::mouse_handlers::handle_mouse_event;
 use duck_irc::input::keyboard_handlers::handle_keyboard_event;
 
+struct TerminalGuard;
+
+impl Drop for TerminalGuard {
+    fn drop(&mut self) {
+        let _ = execute!(std::io::stdout(), DisableMouseCapture);
+        ratatui::restore();
+    }
+}
+
 #[tokio::main]
 async fn main() -> Result<()> {
     // Initialize error handling
@@ -27,20 +36,25 @@ async fn main() -> Result<()> {
     let (ui_tx, mut ui_rx) = mpsc::unbounded_channel::<UiEvent>(); // IRC -> UI
     
     // Start the IRC client
-    tokio::spawn(run_irc(ui_tx.clone(), irc_rx));
+    let irc_handle = tokio::spawn(run_irc(ui_tx.clone(), irc_rx));
     
     // Initialize the app state
     let mut app = App::new();
+    app.make_system_channel_if_missing("DuckIRC", "Welcome");
+    app.set_current_channel("DuckIRC", "Welcome");
     app.push_initial_messages();
     let initial_nick = get_user_nick().unwrap_or("guest".to_string());
     app.current_nick = initial_nick;
     execute!(std::io::stdout(), EnableMouseCapture)?;
+    let _guard = TerminalGuard;
 
     // Initialize terminal UI
     let terminal = ratatui::init();
 
     // Event loop
-    let result = run(terminal, &mut app, irc_tx, &mut ui_rx).await;
+    let result = run(terminal, &mut app, irc_tx.clone(), &mut ui_rx).await;
+    let _ = irc_tx.send(IrcCommand::Quit);
+    irc_handle.abort();
     execute!(std::io::stdout(), DisableMouseCapture)?;
     ratatui::restore();
     result
@@ -53,11 +67,7 @@ async fn run(
     ui_rx: &mut mpsc::UnboundedReceiver<UiEvent>,
 ) -> Result<()> {
     let mut click_state = ClickState::new();
-    loop {
-        if app.should_quit {
-            break;
-        }
-        
+    while !app.should_quit {
         // Check for IRC messages (non-blocking)
         while let Ok(event) = ui_rx.try_recv() {
             match event {

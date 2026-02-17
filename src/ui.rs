@@ -181,7 +181,7 @@ pub fn render(frame: &mut Frame, app: &mut App) {
             Block::default()
                 .borders(Borders::ALL)
                 .border_type(BorderType::Rounded)
-                .title(format!("{} messages", channel_name)),
+                .title(channel_name),
         )
         .wrap(Wrap { trim: true });
 

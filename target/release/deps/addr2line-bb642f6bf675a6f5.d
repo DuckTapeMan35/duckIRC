@@ -1,0 +1,12 @@
+/home/duck/duckIRC/target/release/deps/addr2line-bb642f6bf675a6f5.d: /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/addr2line-0.25.1/src/lib.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/addr2line-0.25.1/src/frame.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/addr2line-0.25.1/src/function.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/addr2line-0.25.1/src/line.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/addr2line-0.25.1/src/lookup.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/addr2line-0.25.1/src/unit.rs
+
+/home/duck/duckIRC/target/release/deps/libaddr2line-bb642f6bf675a6f5.rlib: /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/addr2line-0.25.1/src/lib.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/addr2line-0.25.1/src/frame.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/addr2line-0.25.1/src/function.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/addr2line-0.25.1/src/line.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/addr2line-0.25.1/src/lookup.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/addr2line-0.25.1/src/unit.rs
+
+/home/duck/duckIRC/target/release/deps/libaddr2line-bb642f6bf675a6f5.rmeta: /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/addr2line-0.25.1/src/lib.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/addr2line-0.25.1/src/frame.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/addr2line-0.25.1/src/function.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/addr2line-0.25.1/src/line.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/addr2line-0.25.1/src/lookup.rs /home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/addr2line-0.25.1/src/unit.rs
+
+/home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/addr2line-0.25.1/src/lib.rs:
+/home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/addr2line-0.25.1/src/frame.rs:
+/home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/addr2line-0.25.1/src/function.rs:
+/home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/addr2line-0.25.1/src/line.rs:
+/home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/addr2line-0.25.1/src/lookup.rs:
+/home/duck/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/addr2line-0.25.1/src/unit.rs:

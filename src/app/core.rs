@@ -65,6 +65,23 @@ impl App {
         }
     }
 
+    pub fn make_system_channel_if_missing(&mut self, server_name: &str, channel_name: &str) {
+        let key = (server_name.to_string(), channel_name.to_string());
+        self.channel_messages.entry(key).or_insert_with(|| ChannelMessages {
+            messages: Vec::new(),
+            msg_index: 0,
+            msg_scroll: 0,
+            viewport_height: 0,
+        });
+    }
+
+    pub fn set_current_channel(&mut self, server_name: &str, channel_name: &str) {
+        self.current_channel = Some(ChannelContext {
+            server_name: server_name.to_string(),
+            channel_name: channel_name.to_string(),
+        });
+    }
+
     pub fn set_yank(&mut self, text: String) {
         // 1. Store in the internal buffer (for pasting within the app with 'p')
         self.yank = text.clone();
@@ -136,7 +153,6 @@ impl App {
         for line in ascii_art.lines() {
             self.push_without_updating_scroll(line.to_string());
         }
-
     }
 
     pub fn clear_messages(&mut self) {

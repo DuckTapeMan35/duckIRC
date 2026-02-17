@@ -243,7 +243,7 @@ duckirc/
 
 - [ ] Fix rapid server switching issues
 - [ ] Add inline image support
-- [ ] Add mode vim commands
+- [ ] Add mode vim commands/motions
 - [ ] Add more IRC commands
 - [ ] Fix bug where the initial greeting message is not shown
 - [ ] Implement a plugin system (embdded Lua?)
