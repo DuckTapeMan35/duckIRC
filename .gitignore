@@ -5,3 +5,6 @@
 # Rust
 src/target/
 target/
+
+# Nix
+.direnv/
